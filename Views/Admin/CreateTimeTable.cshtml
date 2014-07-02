@@ -1,0 +1,696 @@
+﻿@model MYproject.Models.TimeTableMetaData
+@{
+    ViewBag.Title = "CreateTimeTable";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Content/assets/js/jquery-2.0.3.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.10.3.full.min.js"></script>
+                      <script src="http://198.74.61.72/themes/preview/ace/assets/js/ace-extra.min.js"></script>
+
+<link href="~/Content/assets/css/jquery-ui.css" rel="stylesheet" />
+<br>
+&nbsp&nbsp&nbsp<span>Shift:</span><span> <select id="shift" name="shift" required="required" style="width:150px">
+                      <option value="">Select Shift</option>
+                      <option value="Morning">Morning</option>
+                      <option value="After_Noon">After_Noon</option>
+                </select> </span><span>Fall:</span>
+        
+
+              @Html.DropDownListFor(m => m.Batch, (SelectList)ViewBag.batch,"select Fall", new {id="fall" ,@style="width:150px"})
+
+<span>Degree:</span>
+     
+@Html.DropDownListFor(m => m.Degree, (SelectList)ViewBag.degree,"--Select Degree--", new {id="degree" ,@style="width:150px"})
+ <span>Section:</span><span> <select id="section" name="section" required="required" style="width:150px" disabled>
+                      <option value="">Select Section</option>
+                     
+                </select> </span>
+
+<span>Room NO:</span>
+        @Html.DropDownListFor(m=>m.RoomNo,(SelectList)ViewBag.rooms,"--Select Room--",new { @id = "roomno" ,@style="width:150px" })
+             <br><br>
+     <div style="width:90%; margin:0 auto;" >
+ 
+    <table id="table" border="1">
+            <tr id="trm">
+            <td class="bwhite" style="width:10% ; text-align:center"><br /><br /><br /><br /></td>
+            <td class="bviolet" id="d" style="width:10%">
+                <b >&nbsp;&nbsp;8:15AM-9:40AM&nbsp;&nbsp;</b>
+            </td>
+            <td class="blightblue" id="mytd" style="width:10% ; text-align:center"  ><b>&nbsp;&nbsp;9:45AM-11:15AM&nbsp;&nbsp;</b></td>
+            <td class="bred" style="width:10% ; text-align:center"><b>&nbsp;&nbsp;11:30AM-1:00PM&nbsp;&nbsp;</b></td>
+            <td class="bviolet" style="width:10% ; text-align:center"><b>&nbsp;&nbsp;1:00PM-2:30PM&nbsp;&nbsp;</b></td>
+            <td class="blightblue" style="width:10% ; text-align:center" ><b>&nbsp;&nbsp;2:30PM-4:00PM&nbsp;&nbsp;</b></td>
+            <td class="borange" style="width:10% ; text-align:center"><b>&nbsp;&nbsp;4:00PM-5:30PM&nbsp;&nbsp;</b></td>
+       </tr>
+        
+   
+        
+    </table>
+         
+
+                  <!--  starting of dynamic table cell create -->
+     <div>
+
+         <script >
+             var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+             var ctable = "";
+             //  alert('i am second');
+             for (var i = 1; i <= 5; i++) {
+                 var day = days[i - 1].charAt(1);//assign 2nd leter of day to day cell
+
+                 ctable = ctable + '<tr><td class="blightblue"><br /><br /><b>' + days[i - 1] + '</b><br /><br /></td>';
+
+                 for (var cel = 1; cel <= 6; cel++)//lec cell
+                 {
+                     ctable = ctable + '<td  class="a" id=' + day + cel + '> <br />';// assign id to day 2nd letter and cell no in row like o1
+                     // alert(day+cel);
+
+
+                     // this for loop create cell paragraphs that is 4 paragraph tag in each cell
+                     for (var inercel = 0; inercel < 4; inercel++) {
+
+                         if (inercel == 3) {
+                             ctable = ctable + '<p style="text-align:center;"  id=' + day + cel + inercel + '></p>';// this paragraph is hidden and hold the time table record id that stor in data base
+                         }
+                         else
+                             ctable = ctable + '<p style="text-align:center;"  id=' + day + cel + inercel + '></p>';// assign id to day 2nd letter and cell no in row like o1 and paragraph for first subject and teacher name and room no
+                     }
+
+                     ctable = ctable + '</td>';
+                 }
+                 ctable = ctable + '</tr>';
+                 $('#table').append(ctable);
+                 ctable = "";
+             }
+
+             ///////////////////////////   below loops hide the last paragraph from each cell
+             for (var i = 1; i <= 5; i++) {
+                 var day = days[i - 1].charAt(1);//assign 2nd leter of day to day cell
+                 for (var cel = 1; cel <= 6; cel++)//lec cell
+                 {
+                     var id = day + cel + 3;
+                     var divOne = document.getElementById(id);
+                     divOne.style.display = 'none';
+
+                 }
+
+             }
+
+         </script>
+
+        
+
+         </div>
+       </div>
+
+<!-- Edit timetabe opening diolog elements -->
+
+<div id="dialog" title="Basic dialog" >
+    <div id="in" >
+
+        @using (Html.BeginForm("TestForm", "Admin", FormMethod.Post, new { @id = "dialogform" }))
+        {
+            @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+            @Html.HiddenFor(m => m.Batch, new { value = "", id = "fallForm" })
+            @Html.HiddenFor(m => m.Degree, new { value = "", id = "degreeForm" })
+            @Html.HiddenFor(m => m.Shift, new { value = "", id = "shiftForm" })
+             @Html.HiddenFor(m => m.Section, new { value = "", id = "secForm" })
+            @Html.HiddenFor(m => m.id, new { value="",id="recordID"})
+            <input type="hidden" value="a" name="SelectedDate" />
+            <p id="myid" style="color:red"></p>
+           <p>Name :   </p> 
+            @Html.DropDownListFor(m => m.Teacher, (SelectList)ViewBag.teacher, "--Select Teacher--", new { @id = "teacherForm", disabled = "disabled" })
+               @Html.ValidationMessageFor(m => m.Teacher)
+               
+            
+            <p>Subject :   </p> 
+            @Html.DropDownListFor(m => m.Subject, (SelectList)ViewBag.Subject, "--Select Subject--", new { @id = "subjectForm", disabled = "disabled" })
+                @Html.ValidationMessageFor(m => m.Subject)
+               
+            <p>Day :</p>
+            @Html.DropDownListFor(m => m.Days, new SelectList(new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" }), "--Select Day--", new { @id = "DaysForm", disabled = "disabled" })
+
+            
+            <p>Time:</p>
+            <select id="TimeForm" name="Time" disabled="disabled">
+              <option value="8:15AM-9:40AM">08:15AM-09:40AM</option>
+              <option value="9:45AM-11:15AM">09:45AM-11:15AM</option>
+              <option value="11:30AM-1:00PM">11:30AM-01:00PM</option>
+              <option value="1:00PM-2:30PM">01:00PM-02:30PM</option>
+              <option value="2:30PM-4:00PM">02:30PM-04:00PM</option>
+              <option value="4:00PM-5:30PM">04:00PM-05:30PM</option>
+          </select>
+            <p>Room Number:</p>
+             @Html.DropDownListFor(m=>m.RoomNo,(SelectList)ViewBag.rooms,"--Select Room--",new { @id = "RoomNoForm" , disabled = "disabled" })
+                 
+            @*<select id="RoomNoForm" name="RoomNo" disabled="disabled" placeholder="Select room no">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              </select>*@
+            // <input type="submit" value="Upload" />
+        }
+               
+            </div>
+    <input type="button" value="Delete" id="delete" />
+    <input type="button" value="Edit" id="edit" />
+    <input type="button" value="Update" id="update" />
+    <input type="button" value="Add" id="Add" />
+
+</div>
+      
+
+<!-- on degree section and fall change table retrive data from database and show update table  -->
+         <script>
+
+             $(document).ready(function () {
+                 $('#fall').change(function () {
+                     clearTable();
+                     if ($('#shift').val() != "" && $('#fall').val() != "" && $('#degree').val() != "") {  // conditon if three option selected with out null value
+                         var SecFalldegree = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val();
+                         loadSection(SecFalldegree);
+
+                     }
+                 });
+
+                 $('#shift').change(function () {
+                     clearTable();
+                     if ($('#shift').val() != "" && $('#fall').val() != "" && $('#degree').val() != "") {
+                         var SecFalldegree = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val();
+                         loadSection(SecFalldegree);
+                         //  getdata(SecFalldegree);
+                     }
+                 });
+
+                 $('#degree').change(function () {
+                     clearTable();
+                     if ($('#shift').val() != "" && $('#fall').val() != "" && $('#degree').val() != "") {
+                         var SecFalldegree = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val();
+                         loadSection(SecFalldegree);
+                         //getdata(SecFalldegree);
+                     }
+                 });
+
+                 $('#section').change(function () {
+                     clearTable();
+                     if ($('#shift').val() != "" && $('#fall').val() != "" && $('#degree').val() != "" && $('#section').val() != "") {
+                         var SecFalldegree = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val() + "/" + $('#section').val();
+
+                         getdata(SecFalldegree);
+                     }
+                 });
+
+                 function loadSection(SecFalldegree) {
+
+
+                     $("#section option").remove();
+
+                     $.getJSON("/Admin/LoadSection?SecFalldegree=" + SecFalldegree, function (data) {
+
+                         $("#section").append('<option value="">-select Section-</option>');
+
+                         if (data.length <= 0) {  // if their is not Section of any degree
+                             $('#section').attr('disabled', true);
+                             SecFalldegree = SecFalldegree + "/";// this add that tell no section
+                             getdata(SecFalldegree);
+                         }
+                         else {
+                             $.each(data, function (i, item) {
+                                 $('#section').attr('disabled', false);
+                                 $("#section").append('<option value=' + item + '>' + item + '</Option>');
+                                 //showTimeTable(item.Id, item.Teacher, item.Subject, item.Time, item.Days, item.RoomNo);
+
+                             });
+
+                             if ($('#section').val() != "") {
+                                 SecFalldegree = SecFalldegree + "/" + $('#section').val();
+                                 getdata(SecFalldegree);
+                             }
+
+                         }// end else
+
+                     });
+                 };// end load Section Function
+
+                 // calling to controller send data and retive query pass query to showtimetable function 
+                 function getdata(SecFalldegree) {
+
+                     //var dota = "1";
+                     // alert(SecFalldegree);
+                     $.getJSON("/Admin/TimeForClass?SecFalldegree=" + SecFalldegree, function (data) {
+
+
+                         $.each(data, function (i, item) {
+                             // alert(item.Id);
+                             showTimeTable(item.id, item.Teacher, item.Subject, item.Time, item.Days, item.RoomNo);
+
+                         });
+
+                     });
+
+                 };
+
+                 function showTimeTable(ID, teacher, subject, time, day, room) {
+
+
+
+                     var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+                     var period = ["8:15AM-9:40AM", "9:45AM-11:15AM", "11:30AM-1:00PM", "1:00PM-2:30PM", "2:30PM-4:00PM", "4:00PM-5:30PM"];
+
+                     for (var i = 1; i <= 5; i++) {
+                         if (day[1] == days[i - 1].charAt(1)) {
+                             for (var cel = 1; cel <= 6; cel++) {
+                                 if (time == period[cel - 1]) {
+                                     var cellno = day[1] + cel;
+                                     var subid = cellno + 0;       //count the cell no and accourding the day and time and select the <p> id
+                                     var tecid = cellno + 1;
+                                     var roomid = cellno + 2;
+                                     var recordID = cellno + 3;
+
+                                     // Set values to the P in the cell each cell have 4 <p> subject name,teacher name,room no,and the record id in database last one should be hidden for user
+                                     $('#' + cellno + ' #' + subid + '').text(subject);
+                                     $('#' + cellno + ' #' + tecid + '').text(teacher);
+                                     $('#' + cellno + ' #' + roomid + '').text(room);
+                                     $('#' + cellno + ' #' + recordID + '').text(ID);
+                                     //alert($('#' + cellno + ' #' + recordID + '').text());
+
+
+                                 }
+                             }
+                         }
+                     }
+                 }
+
+                 // when option change table clear other class timetable
+                 function clearTable() {
+
+                     var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+                     var period = ["8:15AM-9:40AM", "9:45AM-11:15AM", "11:30AM-1:00PM", "1:00PM-2:30PM", "2:30PM-4:00PM", "2:30PM-4:00PM"];
+
+                     for (var i = 1; i <= 5; i++) {
+                         for (var cel = 1; cel <= 6; cel++) {
+                             // alert("clear");
+                             var cellno = days[i - 1].charAt(1) + cel;
+
+                             var subid = cellno + 0;
+                             var tecid = cellno + 1;
+                             var roomid = cellno + 2;
+                             var recordID = cellno + 3;
+
+
+                             $('#' + cellno + ' #' + subid + '').text("");
+                             $('#' + cellno + ' #' + tecid + '').text("");
+                             $('#' + cellno + ' #' + roomid + '').text("");
+                             $('#' + cellno + ' #' + recordID + '').text("");
+                         }
+                     }
+                 }
+
+
+
+
+
+
+                 //////////////////////////////////
+
+
+                 $(function () {
+                     $('#dialog').dialog({
+                         autoOpen: false,
+                         width: 500,
+                         height: 500,
+                         resizable: false,
+                         title: 'Edit|Delete',
+                         modal: true,
+                         open: function (event, ui) {
+                             if ($('#recordID').val() == "") {
+                                 $('#Add').attr('disabled', false);
+                                 $('#edit').attr('disabled', true);
+                                 $('#update').attr('disabled', true);
+                                 EditAbleDialog();
+                             }
+                             else {
+                                 $('#update').attr('disabled', true);
+                                 $('#Add').attr('disabled', true);
+                                 $('#edit').attr('disabled', false);
+                             }
+
+                         }
+                         ,
+                         close: function (event, ui) {
+                             $('#update').attr('disabled', true);
+                             $('#delete').attr('disabled', false);
+
+
+                             $('#degreeForm').attr('disabled', true);
+                             $('#fallForm').attr('disabled', true);
+                             $('#shiftForm').attr('disabled', true);
+                             $('#secForm').attr('disabled', true);
+                             $('#TimeForm').attr('disabled', true);
+                             $('#DaysForm').attr('disabled', true);
+                             $('#teacherForm').attr('disabled', true);
+                             $('#subjectForm').attr('disabled', true);
+                             $('#RoomNoForm').attr('disabled', true);
+                             $('#myid').text("");
+                         }
+                     });
+
+
+                 });
+
+
+                 function EditAbleDialog() {
+                     $('#degreeForm').attr('disabled', false);
+                     $('#fallForm').attr('disabled', false);
+                     $('#shiftForm').attr('disabled', false);
+                     $('#secForm').attr('disabled', false);
+                     $('#TimeForm').attr('disabled', false);
+                     $('#DaysForm').attr('disabled', false);
+                     $('#teacherForm').attr('disabled', false);
+                     $('#subjectForm').attr('disabled', false);
+                     $('#RoomNoForm').attr('disabled', false);
+                 }
+
+                 ///////////////////////////////// Handling form  .............
+                 $('#edit').click(function () {
+                     $('#delete').attr('disabled', true);
+                     $('#update').attr('disabled', false);
+
+                     EditAbleDialog();
+
+                 });
+
+
+                 $('.a').dblclick(function () {
+                     var id = $(this).attr('id');
+                     var sub = id + 0;
+                     var tec = id + 1;
+                     var room = id + 2;
+                     var recordP = id + 3; // id of <p> that hold lecture record database id
+
+                     // $('#' + cellno + ' #' + subid + '').text("");
+
+                     // here is the code that check for double click event that should be open if any section is avaialbe
+
+                     var checkAnySection = $('#section').map(function () {
+                         return $(this).find('option:not(:disabled)').length;
+                     }).toArray();
+
+
+                     if (checkAnySection > 1) {
+                         if ($('#shift').val() != "" && $('#fall').val() != "" && $('#degree').val() != "" && $('#section').val() != "") {
+                             for (var i = 0; i < 5; i++) {
+                                 if (id.charAt(0) == days[i].charAt(1)) {
+                                     day = days[i];
+                                     break;
+                                 }
+                             }
+                             var period = ["8:15AM-9:40AM", "9:45AM-11:15AM", "11:30AM-1:00PM", "1:00PM-2:30PM", "2:30PM-4:00PM", "2:30PM-4:00PM"];
+                             var time = period[parseInt(id.charAt(1)) - 1];
+
+                             var subject = $('#' + id + ' #' + sub + '').text();
+                             var teacher = $('#' + id + ' #' + tec + '').text();
+                             var roomno = $('#' + id + ' #' + room + '').text();
+                             var recordId = $('#' + id + ' #' + recordP + '').text();
+
+                             if (recordId == "") {
+                                 $('#delete').attr('disabled', true); // if their is no record then we can't delete that record
+                                 $('#Add').attr('disabled', false);
+                             }
+                             else if (recordId != "") {
+                                 $('#delete').attr('disabled', false);
+
+                             }
+
+                             if (roomno == "")
+                                 roomno = $('#roomno').val();// set room value that is select outer of the time table in view to un un intialized cell
+
+                             $('#recordID').val(recordId);//set the dialog hidden field value 
+                             $('#teacherForm').val(teacher);
+                             $('#subjectForm').val(subject);
+                             $('#DaysForm').val(day);
+                             $('#TimeForm').val(time);
+
+                             $('#da').val(day);
+                             $('#TF').val(time);
+
+                             $('#RoomNoForm').val(roomno);
+
+                             $('#degreeForm').val($('#degree').val());
+                             $('#fallForm').val($('#fall').val());
+                             $('#shiftForm').val($('#shift').val());
+                             $('#secForm').val($('#section').val());
+                             $("#dialog").dialog("open");
+                         }
+
+                     }
+                     else {
+                         if ($('#shift').val() != "" && $('#fall').val() != "" && $('#degree').val() != "") {
+
+                             for (var i = 0; i < 5; i++) {
+                                 if (id.charAt(0) == days[i].charAt(1)) {
+                                     day = days[i];
+                                     break;
+                                 }
+                             }
+                             var period = ["8:15AM-9:40AM", "9:45AM-11:15AM", "11:30AM-1:00PM", "1:00PM-2:30PM", "2:30PM-4:00PM", "2:30PM-4:00PM"];
+                             var time = period[parseInt(id.charAt(1)) - 1];
+
+                             var subject = $('#' + id + ' #' + sub + '').text();
+                             var teacher = $('#' + id + ' #' + tec + '').text();
+                             var roomno = $('#' + id + ' #' + room + '').text();
+                             var recordId = $('#' + id + ' #' + recordP + '').text();
+
+                             if (recordId == "") {
+                                 $('#delete').attr('disabled', true); // if their is no record then we can't delete that record
+                                 $('#Add').attr('disabled', false);
+                             }
+                             else if (recordId != "") {
+                                 $('#delete').attr('disabled', false);
+
+                             }
+
+                             if (roomno == "")
+                                 roomno = $('#roomno').val();// set room value that is select outer of the time table in view to un un intialized cell
+
+                             $('#recordID').val(recordId);//set the dialog hidden field value 
+                             $('#teacherForm').val(teacher);
+                             $('#subjectForm').val(subject);
+                             $('#DaysForm').val(day);
+                             $('#TimeForm').val(time);
+
+                             $('#da').val(day);
+                             $('#TF').val(time);
+
+                             $('#RoomNoForm').val(roomno);
+
+                             $('#degreeForm').val($('#degree').val());
+                             $('#fallForm').val($('#fall').val());
+                             $('#shiftForm').val($('#shift').val());
+                             $('#secForm').val($('#section').val());
+                             $("#dialog").dialog("open");
+                         }
+                     }
+                 });
+
+
+                 $('#delete').click(function () {
+
+                     deleteLecture();
+
+
+                 });
+
+                 function deleteLecture() {
+
+                     $.ajax({
+                         type: 'POST',
+                         url: '/admin/delLecture',
+                         data: $('#dialogform').serialize(),
+                         success: function (x) {
+                             clearTable();
+                             var SecFalldegree = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val() + "/" + $('#section').val();
+                             getdata(SecFalldegree);
+                             alert(x);
+                             $('#dialog').dialog("close");
+
+                         },
+                         error: function () {
+                             clearTable();
+                             var SecFalldegree = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val() + "/" + $('#section').val();
+                             getdata(SecFalldegree);
+                             alert('Error');
+                             $('#dialog').dialog("close");
+                         }
+                     });
+
+                 }
+
+
+
+
+                 //              Add new Record Scripting                /////////////////////////////////
+                 $('#Add').click(function () {
+
+                     AddLecture();
+
+
+
+                 });
+
+                 function AddLecture() {
+
+                     $.ajax({
+                         type: 'POST',
+                         url: '/admin/AddLecture',
+                         data: $('#dialogform').serialize(),
+                         success: function (x) {
+
+                             var SecFalldegree = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val() + "/" + $('#section').val();
+
+                             if (x === "Record Successfully added") {
+                                 clearTable();
+                                 getdata(SecFalldegree);
+                                 alert(x);
+                                 $('#dialog').dialog("close");
+                             }
+
+                             else {
+                                 $('#myid').text(x);
+                             }
+                             //$('#Er').text(x);
+                             //alert("yes");
+
+
+                             // alert(x);
+
+                         },
+                         error: function () {
+
+
+                             if (x === "not") {
+                                 $('#myid').text("filled");
+                                 alert($('#myid').text());
+                             }
+                             var SecFalldegree = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val() + "/" + $('#section').val();
+                             $('#myid').text("filled");
+                             //alert("in error");
+                             //$('#Er').text("Error occur");
+                             clearTable();
+                             getdata(SecFalldegree);
+                             //alert();
+
+                         }
+                     });
+                 }// end add lecture function
+
+
+
+                 // update function here starting
+
+                 $('#update').click(function () {
+
+
+                     UpdateLecture();
+
+
+                 });
+                 function UpdateLecture() {
+
+                     $.ajax({
+                         type: 'POST',
+                         url: '/admin/UpdateLecture',
+                         data: $('#dialogform').serialize(),
+                         success: function (x) {
+
+                             var SecFalldegree = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val() + "/" + $('#section').val();
+
+                             if (x === "Record Successfully Updated") {
+                                 clearTable();
+                                 getdata(SecFalldegree);
+                                 alert(x);
+                                 $('#dialog').dialog("close");
+                             }
+
+                             else {
+                                 $('#myid').text(x);
+                             }
+                             // alert(x);
+
+                         },
+                         error: function (x) {
+
+                             //f1();
+                             var SecFalldegree = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val() + "/" + $('#section').val();
+
+
+                             //$('#myid').text("Error occur");
+                             clearTable();
+                             getdata(SecFalldegree);
+                             // alert(x);
+                             $(this).dialog("close");
+                             //alert();
+
+                         }
+
+
+                     });
+
+                 }// end updater function
+
+                 $('#teacherForm').change(function () { $('#myid').text(""); });
+                 $('#RoomNoForm').change(function () {
+
+                     var d = $('#myid').text();
+                     if (d.indexOf("Room") != -1 || d.indexOf("Fill") != -1) {
+                         $('#myid').text("");
+                     }
+                 });
+                 $('#DaysForm').change(function () { $('#myid').text(""); });
+                 $('#TimeForm').change(function () { $('#myid').text(""); });
+                 ////function that run on change attribute of dialoge box
+                 //function ClearErrorMsg() {
+                 //    if ($('#myid').text() != "") {
+
+                 //        $('#teacherForm').change(function () { $('#Error').text(""); });
+                 //        $('#subjectForm').change(function () { $('#Error').text(""); });
+                 //        $('#DaysForm').change(function () { $('#Error').text(""); });
+                 //        $('#TimeForm').change(function () { $('#Error').text(""); });
+                 //    }
+
+                 //}
+
+
+
+             });
+
+
+
+
+
+             </script>
+             
+
+
+
+      
+
+ <!--  Script that change the time table on click open dilog and so on...... -->
+
+           
+
+               
+             
+         
+

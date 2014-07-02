@@ -1,0 +1,325 @@
+﻿@{
+    Layout = null;
+}
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<!DOCTYPE html>
+
+@using MYproject.Models
+@model PrintData
+@{var k = "";
+  var p1 = "";
+  var p2 = "";
+  var p3="";
+      };
+<br/>
+
+
+@{
+    string[] time = { "", "", "" };
+    var split = Model.ImageUrl.Split('/'); 
+    var shift=split[split.Length-1];
+    
+    if(shift[0].Equals('M')){
+        
+        time[0]="8:15AM-9:40AM";
+        time[1]="9:45AM-11:15AM";
+        time[2] = "11:30AM-1:00PM";
+        
+    }
+    else if (shift[0].Equals('A')){
+
+        time[0] = "1:00PM-2:30PM";
+        time[1] = "2:30PM-4:00PM";
+        time[2] = "4:00PM-5:30PM";
+    }
+    
+}
+<p>@shift</p>
+<br/>
+
+
+
+
+<table cellpadding="3" cellspacing="3">
+    <tr border="1" bgcolor="#777777" color="#ffffff">
+        <td width="25%" align="center">
+            DAY
+        </td>
+        <td width="25%" align="center">
+            @time[0]
+        </td>
+        <td width="25%" align="center">
+            @time[1]
+        </td>
+        <td width="25%" align="center">
+           @time[2]
+        </td>
+    </tr>
+    @{
+        var OddColor = "#DDEEEE";
+        var evenColor = "#EEFFFF";
+        var Odd = OddColor;
+        
+        
+    }
+    
+
+    @{var p = "<tr border='1' bgcolor='@Odd'><td align='center'>Monday</td>";
+     // var da="8:15AM-9:40AM", "9:45AM-11:15AM", "11:30AM-1:00PM", "1:00PM-2:30PM";
+      }
+    @foreach (TimeTableMetaData item in Model)
+    {
+        if (item.Days.Equals("Monday"))
+        {
+            if (item.Time.Equals(time[0]))
+            {
+                p1 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            
+            }
+            else if (item.Time.Equals(time[1]))
+            {
+                p2 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            }
+            else if (item.Time.Equals(time[2]))
+            {
+                p3 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            }
+            
+           
+            
+        }
+        
+        
+    }
+
+    @if (p1.Length < 5)
+    {
+        p1 = "<td></td>";
+    }
+    @if (p2.Length < 5)
+    {
+        p2 = "<td></td>";
+    }
+    @if (p3.Length < 5)
+    {
+        p3 = "<td></td>";
+    }
+
+    @{k = p + p1 + p2 + p3 + "</tr>";}
+    @Html.Raw(k)
+   
+
+@*.................*@
+    @if (Odd == OddColor)
+        {
+            Odd = evenColor;
+        }
+        else
+        {
+            Odd = OddColor;
+        }
+     @{ p = "<tr border='1' bgcolor='@Odd'><td align='center'>Tuesday</td>";
+        p1 = ""; p2 = ""; p3 = ""; k = "";
+      }
+    @foreach (TimeTableMetaData item in Model)
+    {
+        if (item.Days.Equals("Tuesday"))
+        {
+            if (item.Time.Equals(time[0]))
+            {
+                p1 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            
+            }
+            else if (item.Time.Equals(time[1]))
+            {
+                p2 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            }
+            else if (item.Time.Equals(time[2]))
+            {
+                p3 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            }
+            
+           
+            
+        }
+        
+        
+    }
+
+    @if (p1.Length < 5)
+    {
+        p1 = "<td></td>";
+    }
+    @if (p2.Length < 5)
+    {
+        p2 = "<td></td>";
+    }
+    @if (p3.Length < 5)
+    {
+        p3 = "<td></td>";
+    }
+
+    @{k = p + p1 + p2 + p3 + "</tr>";}
+    @Html.Raw(k)
+        
+    @*.................*@
+     @if (Odd == OddColor)
+        {
+            Odd = evenColor;
+        }
+        else
+        {
+            Odd = OddColor;
+        }
+     @{ p = "<tr border='1' bgcolor='@Odd'><td align='center'>Wednesday</td>";
+        p1 = ""; p2 = ""; p3 = ""; k = "";
+      }
+    @foreach (TimeTableMetaData item in Model)
+    {
+        if (item.Days.Equals("Wednesday"))
+        {
+            if (item.Time.Equals(time[0]))
+            {
+                p1 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            
+            }
+            else if (item.Time.Equals(time[1]))
+            {
+                p2 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            }
+            else if (item.Time.Equals(time[2]))
+            {
+                p3 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            }
+            
+           
+            
+        }
+        
+        
+    }
+
+    @if (p1.Length < 5)
+    {
+        p1 = "<td></td>";
+    }
+    @if (p2.Length < 5)
+    {
+        p2 = "<td></td>";
+    }
+    @if (p3.Length < 5)
+    {
+        p3 = "<td></td>";
+    }
+
+    @{k = p + p1 + p2 + p3 + "</tr>";}
+    @Html.Raw(k)
+
+      @*.................*@
+     @if (Odd == OddColor)
+        {
+            Odd = evenColor;
+        }
+        else
+        {
+            Odd = OddColor;
+        }
+     @{ p = "<tr border='1' bgcolor='@Odd'><td align='center'>Thursday</td>";
+        p1 = ""; p2 = ""; p3 = ""; k = "";
+      }
+    @foreach (TimeTableMetaData item in Model)
+    {
+        if (item.Days.Equals("Thursday"))
+        {
+            if (item.Time.Equals(time[0]))
+            {
+                p1 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            
+            }
+            else if (item.Time.Equals(time[1]))
+            {
+                p2 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            }
+            else if (item.Time.Equals(time[2]))
+            {
+                p3 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            }
+            
+           
+            
+        }
+        
+        
+    }
+
+    @if (p1.Length < 5)
+    {
+        p1 = "<td></td>";
+    }
+    @if (p2.Length < 5)
+    {
+        p2 = "<td></td>";
+    }
+    @if (p3.Length < 5)
+    {
+        p3 = "<td></td>";
+    }
+
+    @{k = p + p1 + p2 + p3 + "</tr>";}
+    @Html.Raw(k)
+
+      @*.................*@
+     @if (Odd == OddColor)
+        {
+            Odd = evenColor;
+        }
+        else
+        {
+            Odd = OddColor;
+        }
+     @{ p = "<tr border='1' bgcolor='@Odd'><td align='center'>Friday</td>";
+        p1 = ""; p2 = ""; p3 = ""; k = "";
+      }
+    @foreach (TimeTableMetaData item in Model)
+    {
+        if (item.Days.Equals("Friday"))
+        {
+            if (item.Time.Equals(time[0]))
+            {
+                p1 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            
+            }
+            else if (item.Time.Equals(time[1]))
+            {
+                p2 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            }
+            else if (item.Time.Equals(time[2]))
+            {
+                p3 = "<td align='center'><p>" + item.Subject + "</p><p>" + item.Teacher + "</p>" + item.RoomNo + "</td>";
+            }
+            
+           
+            
+        }
+        
+        
+    }
+
+    @if (p1.Length < 5)
+    {
+        p1 = "<td></td>";
+    }
+    @if (p2.Length < 5)
+    {
+        p2 = "<td></td>";
+    }
+    @if (p3.Length < 5)
+    {
+        p3 = "<td></td>";
+    }
+
+    @{k = p + p1 + p2 + p3 + "</tr>";}
+    @Html.Raw(k)
+
+        
+</table>

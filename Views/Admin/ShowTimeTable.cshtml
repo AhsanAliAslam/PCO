@@ -1,0 +1,307 @@
+﻿@model MYproject.Models.TimeTableMetaData
+@{
+    ViewBag.Title = "CreateTimeTable";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/Content/assets/js/jquery-2.0.3.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.10.3.full.min.js"></script>
+                      <script src="http://198.74.61.72/themes/preview/ace/assets/js/ace-extra.min.js"></script>
+
+<link href="~/Content/assets/css/jquery-ui.css" rel="stylesheet" />
+       
+<br>
+&nbsp&nbsp&nbsp<span>Shift:</span><span> <select id="shift" name="shift" required="required" style="width:150px">
+                      <option value="">Select Shift</option>
+                      <option value="Morning">Morning</option>
+                      <option value="After_Noon">After_Noon</option>
+                </select> </span><span>Fall:</span>
+        
+
+              @Html.DropDownListFor(m => m.Batch, (SelectList)ViewBag.batch,"select Fall", new {id="fall" ,@style="width:150px"})
+
+<span>Degree:</span>
+     
+@Html.DropDownListFor(m => m.Degree, (SelectList)ViewBag.degree,"--Select Degree--", new {id="degree" ,@style="width:150px"})
+ <span>Section:</span><span> <select id="section" name="section" required="required" style="width:150px" disabled>
+                      <option value="">Select Section</option>
+                     
+                </select> </span>
+
+             <br><br>
+     <div style="width:800px; margin:0 auto;" >
+ 
+    <table id="table" border="1">
+            <tr id="trm">
+            <td class="bwhite"><br /><br /><br /><br /></td>
+            <td class="bviolet" id="d" >
+                <b>&nbsp;&nbsp;8:15AM-9:40AM&nbsp;&nbsp;</b>
+            </td>
+            <td class="blightblue" id="mytd" ><b>&nbsp;&nbsp;9:45AM-11:15AM&nbsp;&nbsp;</b></td>
+            <td class="bred" ><b>&nbsp;&nbsp;11:30AM-1:00PM&nbsp;&nbsp;</b></td>
+            <td class="bviolet"><b>&nbsp;&nbsp;1:00PM-2:30PM&nbsp;&nbsp;</b></td>
+            <td class="blightblue" ><b>&nbsp;&nbsp;2:30PM-4:00PM&nbsp;&nbsp;</b></td>
+            <td class="borange" ><b>&nbsp;&nbsp;4:00PM-5:30PM&nbsp;&nbsp;</b></td>
+       </tr>
+        
+   
+        
+    </table>
+         
+
+          <div id="as"></div>
+             <!--  starting of dynamic table cell create -->
+     <div>
+
+         <script>
+             var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+             var ctable = "";
+             //  alert('i am second');
+             for (var i = 1; i <= 5; i++) {
+                 var day = days[i - 1].charAt(1);//assign 2nd leter of day to day cell
+
+                 ctable = ctable + '<tr><td class="blightblue" style="text-align:center;" ><br /><br /><b>' + days[i - 1] + '</b><br /><br /></td>';
+
+                 for (var cel = 1; cel <= 6; cel++)//lec cell
+                 {
+                     ctable = ctable + '<td  class="a" id=' + day + cel + '> <br />';// assign id to day 2nd letter and cell no in row like o1
+                     // alert(day+cel);
+
+
+                     // this for loop create cell paragraphs that is 4 paragraph tag in each cell
+                     for (var inercel = 0; inercel < 4; inercel++) {
+
+                         if (inercel == 3) {
+                             ctable = ctable + '<p style="text-align:center;"  id=' + day + cel + inercel + '></p>';// this paragraph is hidden and hold the time table record id that stor in data base
+                         }
+                         else
+                             ctable = ctable + '<p style="text-align:center;"  id=' + day + cel + inercel + '></p>';// assign id to day 2nd letter and cell no in row like o1 and paragraph for first subject and teacher name and room no
+                     }
+
+                     ctable = ctable + '</td>';
+                 }
+                 ctable = ctable + '</tr>';
+                 $('#table').append(ctable);
+                 ctable = "";
+             }
+
+             ///////////////////////////   below loops hide the last paragraph from each cell
+             for (var i = 1; i <= 5; i++) {
+                 var day = days[i - 1].charAt(1);//assign 2nd leter of day to day cell
+                 for (var cel = 1; cel <= 6; cel++)//lec cell
+                 {
+                     var id = day + cel + 3;
+                     var divOne = document.getElementById(id);
+                     divOne.style.display = 'none';
+
+                 }
+
+             }
+
+         </script>
+
+        
+
+         </div>
+       </div>
+
+<!-- Edit timetabe opening diolog elements -->
+
+
+    
+<div id="printButton"  style="display:none"  >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<b>@Ajax.ActionLink("Print Time Table", "PrintCustomers", "admin", new { degree = "foo1" }, new AjaxOptions() { HttpMethod = "Get", Url = "_blank" }, new { id="Print"})</b></div>
+<!-- on degree section and fall change table retrive data from database and show update table  -->
+
+         <script>
+
+             $(document).ready(function () {
+                 // This function send the paramert to Print Function section degree and fall
+                 $('#Print').click(function () {
+                     var secfal = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val() + "/" + $('#section').val();
+                     $('#Print').attr('href', function () {
+                         return this.href.replace('foo1', secfal);
+                     });
+                 });
+
+
+
+                 $('#fall').change(function () {
+                     $('#printButton').hide();
+                     clearTable();
+                     if ($('#shift').val() != "" && $('#fall').val() != "" && $('#degree').val() != "") {  // conditon if three option selected with out null value
+                         var SecFalldegree = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val();
+
+                         loadSection(SecFalldegree);
+
+
+                     }
+                 });
+
+                 $('#shift').change(function () {
+                     $('#printButton').hide();
+                     clearTable();
+                     if ($('#shift').val() != "" && $('#fall').val() != "" && $('#degree').val() != "") {
+                         var SecFalldegree = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val();
+
+                         loadSection(SecFalldegree);
+
+                         //  getdata(SecFalldegree);
+                     }
+                 });
+
+                 $('#degree').change(function () {
+                     $('#printButton').hide();
+                     clearTable();
+                     if ($('#shift').val() != "" && $('#fall').val() != "" && $('#degree').val() != "") {
+                         var SecFalldegree = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val();
+
+                         loadSection(SecFalldegree);
+
+                         //getdata(SecFalldegree);
+                     }
+                 });
+
+                 $('#section').change(function () {
+                     $('#printButton').hide();
+                     clearTable();
+                     if ($('#shift').val() != "" && $('#fall').val() != "" && $('#degree').val() != "" && $('#section').val() != "") {
+                         var SecFalldegree = $('#shift').val() + "/" + $('#fall').val() + "/" + $('#degree').val() + "/" + $('#section').val();
+
+                         getdata(SecFalldegree);
+
+                     }
+                 });
+
+                 function loadSection(SecFalldegree) {
+
+
+                     $("#section option").remove();
+
+                     $.getJSON("/Admin/LoadSection?SecFalldegree=" + SecFalldegree, function (data) {
+
+                         $("#section").append('<option value="">-select Section-</option>');
+
+                         if (data.length <= 0) {  // if their is not Section of any degree
+                             $('#section').attr('disabled', true);
+                             SecFalldegree = SecFalldegree + "/";// this add that tell no section
+                             getdata(SecFalldegree);
+
+                         }
+                         else {
+                             $.each(data, function (i, item) {
+                                 $('#section').attr('disabled', false);
+                                 $("#section").append('<option value=' + item + '>' + item + '</Option>');
+                                 //showTimeTable(item.Id, item.Teacher, item.Subject, item.Time, item.Days, item.RoomNo);
+
+                             });
+
+                             if ($('#section').val() != "") {
+                                 SecFalldegree = SecFalldegree + "/" + $('#section').val();
+                                 getdata(SecFalldegree);
+
+                             }
+
+                         }// end else
+
+                     });
+                 };// end load Section Function
+
+                 // calling to controller send data and retive query pass query to showtimetable function 
+                 function getdata(SecFalldegree) {
+
+                     //var dota = "1";
+                     // alert(SecFalldegree);
+                     $.getJSON("/Admin/TimeForClass?SecFalldegree=" + SecFalldegree, function (data) {
+
+
+                         $.each(data, function (i, item) {
+                             // alert(item.Id);
+                             showTimeTable(item.id, item.Teacher, item.Subject, item.Time, item.Days, item.RoomNo);
+
+                         });
+
+                     });
+                     $('#printButton').show();
+                 };
+
+                 function showTimeTable(ID, teacher, subject, time, day, room) {
+
+
+
+                     var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+                     var period = ["8:15AM-9:40AM", "9:45AM-11:15AM", "11:30AM-1:00PM", "1:00PM-2:30PM", "2:30PM-4:00PM", "4:00PM-5:30PM"];
+
+                     for (var i = 1; i <= 5; i++) {
+                         if (day[1] == days[i - 1].charAt(1)) {
+                             for (var cel = 1; cel <= 6; cel++) {
+                                 if (time == period[cel - 1]) {
+                                     var cellno = day[1] + cel;
+                                     var subid = cellno + 0;       //count the cell no and accourding the day and time and select the <p> id
+                                     var tecid = cellno + 1;
+                                     var roomid = cellno + 2;
+                                     var recordID = cellno + 3;
+
+                                     // Set values to the P in the cell each cell have 4 <p> subject name,teacher name,room no,and the record id in database last one should be hidden for user
+                                     $('#' + cellno + ' #' + subid + '').text(subject);
+                                     $('#' + cellno + ' #' + tecid + '').text(teacher);
+                                     $('#' + cellno + ' #' + roomid + '').text(room);
+                                     $('#' + cellno + ' #' + recordID + '').text(ID);
+                                     //alert($('#' + cellno + ' #' + recordID + '').text());
+
+
+                                 }
+                             }
+                         }
+                     }
+                 }
+
+                 // when option change table clear other class timetable
+                 function clearTable() {
+
+                     var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+                     var period = ["8:15AM-9:40AM", "9:45AM-11:15AM", "11:30AM-1:00PM", "1:00PM-2:30PM", "2:30PM-4:00PM", "2:30PM-4:00PM"];
+
+                     for (var i = 1; i <= 5; i++) {
+                         for (var cel = 1; cel <= 6; cel++) {
+                             // alert("clear");
+                             var cellno = days[i - 1].charAt(1) + cel;
+
+                             var subid = cellno + 0;
+                             var tecid = cellno + 1;
+                             var roomid = cellno + 2;
+                             var recordID = cellno + 3;
+
+
+                             $('#' + cellno + ' #' + subid + '').text("");
+                             $('#' + cellno + ' #' + tecid + '').text("");
+                             $('#' + cellno + ' #' + roomid + '').text("");
+                             $('#' + cellno + ' #' + recordID + '').text("");
+                         }
+                     }
+                 }
+
+
+
+
+
+
+                 //////////////////////////////////
+
+
+             });
+
+
+             </script>
+             
+
+        
+      
+
+ <!--  Script that change the time table on click open dilog and so on...... -->
+
+           
+
+               
+             
+         
+

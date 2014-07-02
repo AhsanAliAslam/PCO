@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "Role";
+}
+
+<h2>Role</h2>
+
+@using(Html.BeginForm("Role","Account",FormMethod.Post)){
+
+    <div>
+        Role: @Html.TextBox("RoleName")
+        <input type="submit" />
+    </div>
+
+}
+
+<h1>Add User to Role</h1>
+
+@using (Html.BeginForm("UserRole", "Account", FormMethod.Post))
+{
+    <p>For simplicity, I have used text boxes but you need to use drop down lists below</p>
+    <div>
+        Role: @Html.TextBox("RoleName")
+         User Name: @Html.TextBox("UserName")
+        <input type="submit" />
+    </div>
+
+}
